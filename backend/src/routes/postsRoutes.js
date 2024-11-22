@@ -1,6 +1,12 @@
 import express from "express";
 import multer from "multer";
-import { listarPosts, cadastrarPosts, uploadImagem } from "../controllers/postsController.js";
+import cors from "cors";
+import { listarPosts, cadastrarPosts, uploadImagem, atualizarNovoPosts, excluirPostController } from "../controllers/postsController.js";
+
+const corsOptions = {
+    origin: "http://localhost:8000",
+    optionsSuccessStatus: 200
+}
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -16,9 +22,12 @@ const upload = multer({ dest: "./uploads" , storage})
 
 const routes = (app) => {
     app.use(express.json());
+    app.use(cors(corsOptions));
     app.get("/posts", listarPosts);
     app.post("/posts", cadastrarPosts);
-    app.post("/upload", upload.single("imagem"), uploadImagem)
+    app.post("/upload", upload.single("imagem"), uploadImagem);
+    app.put("/upload/:id", atualizarNovoPosts);
+    app.delete("/posts/:id", excluirPostController);
 }
 
 export default routes;
